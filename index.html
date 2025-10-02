@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vedika Beauty Parlour</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="logo">✨ Vedika Beauty Parlour</div>
+    <nav>
+      <a href="#book">Book</a>
+      <a href="#previous">Bookings</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="overlay"></div>
+    <div class="hero-content">
+      <h1>Glow. Shine. Repeat.</h1>
+      <p>Book your appointment today and save time tomorrow ✨</p>
+      <button onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">
+        Book Now
+      </button>
+    </div>
+  </section>
+
+  <section id="book" class="booking">
+    <h2>Book Your Appointment</h2>
+    <form id="bookingForm" novalidate>
+      <label for="name">Your Name</label>
+      <input type="text" id="name" placeholder="Enter your name" required />
+
+      <label for="phone">Phone Number</label>
+      <input
+        type="tel"
+        id="phone"
+        placeholder="Enter 10-digit phone number"
+        maxlength="10"
+        pattern="\d{10}"
+        inputmode="numeric"
+        required
+      />
+      <div id="phoneError" class="error-message" style="display:none;"></div>
+
+      <label for="service">Service</label>
+      <select id="service" required>
+        <option value="" disabled selected>Select Service</option>
+        <option>Facial</option>
+        <option>Haircut</option>
+        <option>Makeup</option>
+        <option>Manicure</option>
+        <option>Pedicure</option>
+      </select>
+
+      <label for="date">Date</label>
+      <input type="date" id="date" required />
+
+      <label for="time">Time</label>
+      <input type="time" id="time" required />
+
+      <button type="submit">Confirm Booking</button>
+    </form>
+  </section>
+
+  <section id="previous" class="previous">
+    <h2>My Bookings</h2>
+    <div class="filter">
+      <label for="filterService">Filter by Service:</label>
+      <select id="filterService">
+        <option value="all">All</option>
+        <option>Facial</option>
+        <option>Haircut</option>
+        <option>Makeup</option>
+        <option>Manicure</option>
+        <option>Pedicure</option>
+      </select>
+    </div>
+    <div id="bookingList"></div>
+
+    <h2 style="margin-top:40px;">Calendar View</h2>
+    <div id="calendar"></div>
+  </section>
+
+  <footer>
+    <p>© 2025 Vedika Beauty Parlour | Designed with 💜</p>
+  </footer>
+
+  <script>
+    // PASTE YOUR NEW DEPLOYMENT URL HERE
+const API_URL = "https://script.google.com/macros/s/AKfycby-iA3fM2WF7kU5Y_aw5j6V2r__xrdHxxjXK4qAZ0YeoY8NlDgg1b7AkLCXsIZoMpI7Lw/exec";
+
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("bookingForm");
+    const submitButton = form.querySelector('button[type="submit"]');
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const originalButtonText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending...';
+
+        // Collect data from the form
+        const booking = {
+            name: document.getElementById("name").value.trim(),
+            phone: document.getElementById("phone").value.trim(),
+            service: document.getElementById("service").value,
+            date: document.getElementById("date").value,
+            time: document.getElementById("time").value
+        };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify(booking), // Sending data as JSON
+                headers: { "Content-Type": "application/json" }
+            });
+
+            // The CORS error is prevented by the correct Web App deployment.
+            const result = await response.json();
+
+            // NOTE: Checking for 'SUCCESS' to match the Code.gs response
+            if (result.status === "SUCCESS") { 
+                alert("Booking confirmed! Your details have been saved.");
+                form.reset();
+            } else {
+                alert("Error: " + result.message);
+            }
+        } catch (err) {
+            // This catch block handles genuine network issues (e.g., no internet, or a 500 error)
+            alert("Network Error: Could not connect to the booking server. Please try again.");
+            console.error(err);
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+        }
+    });
+});
+  </script>
+</body>f1
+</html>
